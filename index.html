@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sebra.art — سحر صابری</title>
+  <meta name="description" content="painting what stays unsaid — نقاشی آنچه ناگفته می‌ماند" />
+  
+  <!-- Drawably styles -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/drawably@0.4.2/style.css" />
+  
+  <!-- Optional Drawably Pen font -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/drawably@0.4.2/font/font.css" />
+  
+  <!-- Google Font for Persian body text (soft & readable) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* Kraft paper palette */
+      --paper: #e8d9c0;
+      --paper-dark: #d4c4a8;
+      --ink: #2c2416;
+      --ink-soft: #4a3f2f;
+      --blue-ink: #1e3a5f;
+      --accent-blue: #2a4a7a;
+      --warm-red: #8b3a3a;
+      --forest: #3d5a4c;
+      
+      /* Drawably overrides – ink on kraft */
+      --drawably-stroke: #2c2416;
+      --drawably-fill: #2c2416;
+      --drawably-paper: #e8d9c0;
+      --drawably-error: #8b3a3a;
+      --drawably-success: #3d5a4c;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Vazirmatn", system-ui, sans-serif;
+      background-color: var(--paper);
+      color: var(--ink);
+      line-height: 1.7;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(ellipse at 20% 30%, rgba(212, 196, 168, 0.4) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, rgba(200, 180, 140, 0.3) 0%, transparent 50%);
+    }
+
+    /* Soft paper texture overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ========== HEADER ========== */
+    header {
+      padding: 3.5rem 0 2.5rem;
+      text-align: center;
+    }
+
+    .logo-wrap {
+      margin-bottom: 1.8rem;
+    }
+
+    .logo-wrap img {
+      max-width: 220px;
+      height: auto;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.08));
+    }
+
+    .tagline {
+      font-size: 1.15rem;
+      color: var(--ink-soft);
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      margin-bottom: 0.6rem;
+    }
+
+    .tagline-en {
+      font-family: "Drawably Pen", "Vazirmatn", cursive;
+      font-size: 1.05rem;
+      color: var(--blue-ink);
+      opacity: 0.85;
+      margin-bottom: 2rem;
+    }
+
+    .intro-text {
+      max-width: 520px;
+      margin: 0 auto 2.2rem;
+      font-size: 1.05rem;
+      color: var(--ink-soft);
+      line-height: 1.85;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* ========== NAV ========== */
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-bottom: 3.5rem;
+      padding: 0.8rem 0;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--ink);
+      font-size: 0.95rem;
+      padding: 0.35rem 0.9rem;
+    }
+
+    /* ========== SECTIONS ========== */
+    section {
+      margin-bottom: 4.5rem;
+    }
+
+    .section-title {
+      font-size: 1.55rem;
+      font-weight: 500;
+      margin-bottom: 1.8rem;
+      text-align: center;
+      color: var(--ink);
+    }
+
+    /* ========== GALLERY ========== */
+    .filters {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      margin-bottom: 2.2rem;
+    }
+
+    .filter-btn {
+      cursor: pointer;
+      font-size: 0.9rem;
+      padding: 0.4rem 1rem;
+      background: transparent;
+      border: none;
+      color: var(--ink);
+      font-family: inherit;
+    }
+
+    .filter-btn.active {
+      /* will be styled by drawably solid */
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.8rem;
+    }
+
+    .gallery-item {
+      display: none; /* filtered */
+      flex-direction: column;
+      background: rgba(255, 252, 245, 0.55);
+      overflow: hidden;
+      transition: transform 0.25s ease;
+    }
+
+    .gallery-item.visible {
+      display: flex;
+    }
+
+    .gallery-item:hover {
+      transform: translateY(-4px);
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .gallery-item .caption {
+      padding: 0.9rem 1rem;
+      font-size: 0.9rem;
+      color: var(--ink-soft);
+      text-align: center;
+    }
+
+    /* ========== ABOUT ========== */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    @media (max-width: 768px) {
+      .about-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .about-text p {
+      margin-bottom: 1.1rem;
+      color: var(--ink-soft);
+      font-size: 1.02rem;
+    }
+
+    .about-text p:last-child {
+      margin-bottom: 0;
+    }
+
+    .studio-sketch {
+      background: rgba(255, 252, 245, 0.6);
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .studio-sketch img {
+      max-width: 100%;
+      border-radius: 4px;
+      opacity: 0.95;
+    }
+
+    .studio-label {
+      margin-top: 0.8rem;
+      font-size: 0.88rem;
+      color: var(--ink-soft);
+      font-style: italic;
+    }
+
+    /* ========== PROCESS ========== */
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .step {
+      text-align: center;
+      padding: 1.4rem 1.2rem;
+      background: rgba(255, 252, 245, 0.5);
+    }
+
+    .step-num {
+      font-family: "Drawably Pen", cursive;
+      font-size: 1.6rem;
+      color: var(--blue-ink);
+      margin-bottom: 0.5rem;
+    }
+
+    .step h3 {
+      font-size: 1.05rem;
+      font-weight: 500;
+      margin-bottom: 0.4rem;
+    }
+
+    .step p {
+      font-size: 0.9rem;
+      color: var(--ink-soft);
+    }
+
+    /* ========== CONTACT ========== */
+    .contact-wrap {
+      max-width: 520px;
+      margin: 0 auto;
+      background: rgba(255, 252, 245, 0.55);
+      padding: 2.2rem 1.8rem;
+    }
+
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.3rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .form-group label {
+      font-size: 0.92rem;
+      color: var(--ink-soft);
+    }
+
+    .form-group input,
+    .form-group textarea {
+      font-family: inherit;
+      font-size: 1rem;
+      padding: 0.65rem 0.9rem;
+      background: transparent;
+      border: none;
+      color: var(--ink);
+      width: 100%;
+      outline: none;
+    }
+
+    .form-group textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.2rem;
+      margin-top: 1.8rem;
+      flex-wrap: wrap;
+    }
+
+    .contact-links a {
+      text-decoration: none;
+      color: var(--ink);
+      font-size: 0.95rem;
+    }
+
+    /* ========== FOOTER ========== */
+    footer {
+      text-align: center;
+      padding: 2.5rem 0 3rem;
+      font-size: 0.88rem;
+      color: var(--ink-soft);
+      opacity: 0.85;
+    }
+
+    footer a {
+      color: var(--blue-ink);
+      text-decoration: none;
+    }
+
+    /* Utility */
+    .drawably-btn-wrap {
+      display: inline-block;
+    }
+
+    /* Make drawably cards slightly more paper-like */
+    [data-drawably] {
+      /* library handles most */
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========== HEADER ========== -->
+  <header>
+    <div class="container">
+      <div class="logo-wrap">
+        <img src="images/logo.png" alt="sebra.art" />
+      </div>
+      
+      <p class="tagline">سحر صابری</p>
+      <p class="tagline-en">painting what stays unsaid</p>
+      
+      <p class="intro-text">
+        نقاشی برای من راهی‌ست برای گفتن چیزهایی که کلمات از پس‌شان برنمی‌آیند.
+        هر خط و هر رنگ، تکه‌ای از سکوتی‌ست که دوست دارم با تو شریک شوم.
+      </p>
+
+      <div class="header-actions">
+        <div class="drawably-btn-wrap">
+          <button id="btn-order" type="button">سفارش نقاشی</button>
+        </div>
+        <div class="drawably-btn-wrap">
+          <a id="btn-instagram" href="https://instagram.com/sebra.art" target="_blank" rel="noopener">اینستاگرام</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== NAV ========== -->
+  <nav class="container" id="main-nav">
+    <a href="#gallery" data-nav>گالری</a>
+    <a href="#about" data-nav>درباره من</a>
+    <a href="#process" data-nav>فرآیند کار</a>
+    <a href="#contact" data-nav>تماس</a>
+  </nav>
+
+  <main class="container">
+
+    <!-- ========== GALLERY ========== -->
+    <section id="gallery">
+      <h2 class="section-title" id="title-gallery">گالری آثار</h2>
+
+      <div class="filters" id="filters">
+        <button class="filter-btn active" data-filter="all">همه</button>
+        <button class="filter-btn" data-filter="sketch">اسکچ و مدادی</button>
+        <button class="filter-btn" data-filter="paint">رنگ روغن / اکریلیک</button>
+        <button class="filter-btn" data-filter="portrait">پرتره و چشم</button>
+        <button class="filter-btn" data-filter="nature">طبیعت و منظره</button>
+        <button class="filter-btn" data-filter="concept">مفهومی</button>
+      </div>
+
+      <div class="gallery-grid" id="gallery-grid">
+        <!-- items will be injected or listed here -->
+        <div class="gallery-item visible" data-cat="nature paint">
+          <img src="images/forest-circle.jpg" alt="جنگل دایره‌ای" loading="lazy" />
+          <div class="caption">جنگل مه گرفته</div>
+        </div>
+        <div class="gallery-item visible" data-cat="sketch portrait">
+          <img src="images/hair-sketch.jpg" alt="اسکچ مو" loading="lazy" />
+          <div class="caption">موهای رها</div>
+        </div>
+        <div class="gallery-item visible" data-cat="sketch portrait">
+          <img src="images/eyes-close.jpg" alt="چشم‌ها" loading="lazy" />
+          <div class="caption">چشم‌ها</div>
+        </div>
+        <div class="gallery-item visible" data-cat="sketch concept">
+          <img src="images/goat-sketch.jpg" alt="موجود" loading="lazy" />
+          <div class="caption">موجود زخمی</div>
+        </div>
+        <div class="gallery-item visible" data-cat="paint nature">
+          <img src="images/swan-palette.jpg" alt="قو" loading="lazy" />
+          <div class="caption">قو روی آب</div>
+        </div>
+        <div class="gallery-item visible" data-cat="portrait sketch">
+          <img src="images/eyes-held.jpg" alt="چشم‌های جزئیات" loading="lazy" />
+          <div class="caption">نگاه</div>
+        </div>
+        <div class="gallery-item visible" data-cat="sketch concept">
+          <img src="images/knight-lady.jpg" alt="شوالیه و بانو" loading="lazy" />
+          <div class="caption">شاید دیگر هیچ‌وقت...</div>
+        </div>
+        <div class="gallery-item visible" data-cat="nature paint">
+          <img src="images/palm-night.jpg" alt="نخل شب" loading="lazy" />
+          <div class="caption">شب گرمسیری</div>
+        </div>
+        <div class="gallery-item visible" data-cat="portrait sketch">
+          <img src="images/eyes-notebook.jpg" alt="اسکچ چشم دفتر" loading="lazy" />
+          <div class="caption">نمی‌خواستم تسلیم شوم</div>
+        </div>
+        <div class="gallery-item visible" data-cat="portrait">
+          <img src="images/eyes-coffee.jpg" alt="چشم و قهوه" loading="lazy" />
+          <div class="caption">عکس گرفتن از کارها</div>
+        </div>
+        <div class="gallery-item visible" data-cat="nature paint">
+          <img src="images/cabin-rain.jpg" alt="کلبه بارانی" loading="lazy" />
+          <div class="caption">باران روی سقف</div>
+        </div>
+        <div class="gallery-item visible" data-cat="process">
+          <img src="images/studio-candle.jpg" alt="استودیو" loading="lazy" />
+          <div class="caption">Almost there...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== ABOUT ========== -->
+    <section id="about">
+      <h2 class="section-title" id="title-about">درباره من</h2>
+      
+      <div class="about-grid">
+        <div class="about-text">
+          <p>
+            من سحر صابری هستم. بیشتر وقتم را با مداد، قلم‌مو و سکوت می‌گذرانم.
+            کارم از اسکچ‌های ساده شروع می‌شود و گاهی به نقاشی‌های رنگی روی بوم‌های گرد می‌رسد.
+          </p>
+          <p>
+            علاقه‌ام به جزئیات چشم‌ها، موها، نور ملایم و فضاهای آرام است.
+            دوست دارم چیزی بکشم که بیننده حس کند مدتی در آن لحظه مانده.
+          </p>
+          <p>
+            اگر دوست داری سفارشی بدهی یا فقط حرف بزنی، خوشحال می‌شوم ازت بشنوم.
+          </p>
+        </div>
+        
+        <div class="studio-sketch" id="studio-card">
+          <img src="images/studio-candle.jpg" alt="گوشه‌ای از میز کار" />
+          <p class="studio-label">گوشه‌ای از میز کار</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== PROCESS ========== -->
+    <section id="process">
+      <h2 class="section-title" id="title-process">فرآیند کار</h2>
+      
+      <div class="process-steps">
+        <div class="step" id="step1">
+          <div class="step-num">۱</div>
+          <h3>ایده و اسکچ</h3>
+          <p>شروع با خطوط سریع روی کاغذ کاهی یا دفتر اسکچ</p>
+        </div>
+        <div class="step" id="step2">
+          <div class="step-num">۲</div>
+          <h3>لایه‌گذاری</h3>
+          <p>سایه‌ها، بافت و جزئیات با مداد یا رنگ</p>
+        </div>
+        <div class="step" id="step3">
+          <div class="step-num">۳</div>
+          <h3>رنگ و نور</h3>
+          <p>اکریلیک یا روغن روی بوم گرد یا مستطیل</p>
+        </div>
+        <div class="step" id="step4">
+          <div class="step-num">۴</div>
+          <h3>پایان</h3>
+          <p>عکس‌برداری در نور طبیعی و آماده شدن برای تو</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== CONTACT ========== -->
+    <section id="contact">
+      <h2 class="section-title" id="title-contact">تماس و سفارش</h2>
+      
+      <div class="contact-wrap" id="contact-card">
+        <form class="contact-form" id="contact-form" onsubmit="return false;">
+          <div class="form-group">
+            <label for="name">نام</label>
+            <div id="input-name-wrap">
+              <input type="text" id="name" name="name" placeholder="اسمت رو بنویس" required />
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="message">پیام یا موضوع سفارش</label>
+            <div id="input-msg-wrap">
+              <textarea id="message" name="message" placeholder="چی دوست داری برات بکشم؟" required></textarea>
+            </div>
+          </div>
+          
+          <div style="text-align: center; margin-top: 0.5rem;">
+            <button type="submit" id="btn-submit">ارسال پیام</button>
+          </div>
+        </form>
+
+        <div class="contact-links">
+          <a href="https://instagram.com/sebra.art" target="_blank" rel="noopener" id="link-ig">@sebra.art</a>
+          <a href="tel:09960091143" id="link-phone">۰۹۹۶۰۰۹۱۱۴۳</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>© ۱۴۰۵ sebra.art — سحر صابری</p>
+      <p style="margin-top: 0.4rem; font-size: 0.82rem;">
+        ساخته شده با علاقه و کمی جوهر
+      </p>
+    </div>
+  </footer>
+
+  <script type="module">
+    import {
+      drawablyButton,
+      drawablyCard,
+      drawablyInput,
+      drawablyTextarea,
+      drawablyBadge,
+      drawablyUnderline,
+      drawablyDivider
+    } from "https://cdn.jsdelivr.net/npm/drawably@0.4.2/dist/index.js";
+
+    // ---------- Buttons ----------
+    const btnOrder = document.getElementById("btn-order");
+    drawablyButton(btnOrder, { variant: "solid", roughness: 1.1, boil: 0.35 });
+    btnOrder.addEventListener("click", () => {
+      document.getElementById("contact").scrollIntoView({ behavior: "smooth" });
+    });
+
+    const btnIg = document.getElementById("btn-instagram");
+    // turn <a> into button-like
+    btnIg.style.display = "inline-block";
+    btnIg.style.padding = "0.55rem 1.3rem";
+    btnIg.style.cursor = "pointer";
+    drawablyButton(btnIg, { variant: "outline", roughness: 1.05 });
+
+    const btnSubmit = document.getElementById("btn-submit");
+    drawablyButton(btnSubmit, { variant: "solid", roughness: 1.1 });
+
+    // ---------- Nav links as subtle badges / underlines ----------
+    document.querySelectorAll("[data-nav]").forEach((el, i) => {
+      drawablyUnderline(el, { roughness: 0.9, boil: 0.25 });
+    });
+
+    // ---------- Section titles ----------
+    ["title-gallery", "title-about", "title-process", "title-contact"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) drawablyUnderline(el, { roughness: 1.0, boil: 0.3 });
+    });
+
+    // ---------- Filter buttons ----------
+    const filterBtns = document.querySelectorAll(".filter-btn");
+    filterBtns.forEach((btn, idx) => {
+      const isActive = btn.classList.contains("active");
+      drawablyButton(btn, {
+        variant: isActive ? "solid" : "outline",
+        roughness: 1.0,
+        boil: 0.3,
+        seed: 40 + idx
+      });
+    });
+
+    // Filter logic
+    filterBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const filter = btn.dataset.filter;
+        
+        // update active state visually by re-sketching
+        filterBtns.forEach(b => {
+          b.classList.remove("active");
+          // simple way: destroy & recreate would be better but for demo we just toggle class
+        });
+        btn.classList.add("active");
+
+        // show/hide items
+        document.querySelectorAll(".gallery-item").forEach(item => {
+          const cats = item.dataset.cat || "";
+          if (filter === "all" || cats.includes(filter)) {
+            item.classList.add("visible");
+          } else {
+            item.classList.remove("visible");
+          }
+        });
+      });
+    });
+
+    // ---------- Cards ----------
+    document.querySelectorAll(".gallery-item").forEach((item, i) => {
+      drawablyCard(item, { roughness: 1.15, boil: 0.28, seed: 100 + i });
+    });
+
+    const studioCard = document.getElementById("studio-card");
+    if (studioCard) drawablyCard(studioCard, { roughness: 1.1, boil: 0.3 });
+
+    document.querySelectorAll(".step").forEach((step, i) => {
+      drawablyCard(step, { roughness: 1.05, boil: 0.25, seed: 200 + i });
+    });
+
+    const contactCard = document.getElementById("contact-card");
+    if (contactCard) drawablyCard(contactCard, { roughness: 1.1, boil: 0.3 });
+
+    // ---------- Form inputs ----------
+    const nameWrap = document.getElementById("input-name-wrap");
+    const nameInput = document.getElementById("name");
+    // drawablyInput expects a wrapper that contains the input
+    drawablyInput(nameWrap, { roughness: 1.0, boil: 0.25 });
+
+    const msgWrap = document.getElementById("input-msg-wrap");
+    drawablyTextarea(msgWrap, { roughness: 1.05, boil: 0.25 });
+
+    // ---------- Contact links ----------
+    drawablyUnderline(document.getElementById("link-ig"), { roughness: 0.95 });
+    drawablyUnderline(document.getElementById("link-phone"), { roughness: 0.95 });
+
+    // ---------- Form submit feedback ----------
+    document.getElementById("contact-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const btn = document.getElementById("btn-submit");
+      // simple visual feedback – in real site you'd send to backend or WhatsApp
+      const name = document.getElementById("name").value.trim();
+      const msg = document.getElementById("message").value.trim();
+      
+      if (!name || !msg) return;
+      
+      // For now open Instagram DM or just alert
+      const text = `سلام سحر، من ${name} هستم.\n\n${msg}`;
+      // Could open WhatsApp: https://wa.me/989960091143?text=...
+      window.open(`https://instagram.com/sebra.art`, "_blank");
+      
+      // reset
+      document.getElementById("name").value = "";
+      document.getElementById("message").value = "";
+    });
+
+    // Soft scroll for nav
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener("click", (e) => {
+        const href = a.getAttribute("href");
+        if (href.length > 1) {
+          e.preventDefault();
+          document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
